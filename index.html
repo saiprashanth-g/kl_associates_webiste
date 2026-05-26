@@ -1,0 +1,2331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KL Associate, Building Strength, Delivering Excellence</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollSmoother.min.js"></script>
+
+  <style>
+    /* ─── TOKENS ──────────────────────────────────────────── */
+    :root {
+      --navy:       #051650;
+      --near-white: #F5FEFD;
+      --soft-mint:  #EBF5F0;
+      --gold:       #D4A843;
+      --gold-dark:  #a87a2a;
+      --near-black: #111111;
+      --grey:       #444444;
+      --border:     rgba(5,22,80,0.12);
+      --max-w:      1200px;
+      --pad-y:      100px;
+    }
+
+    /* ─── RESET ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--near-black);
+      background: var(--near-white);
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; background: none; font-family: 'DM Sans', sans-serif; }
+    ul { list-style: none; }
+
+    /* ─── UTILITIES ───────────────────────────────────────── */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 48px; }
+
+    .eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .sec-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(34px, 4.5vw, 54px);
+      font-weight: 600;
+      line-height: 1.12;
+      color: var(--navy);
+      margin-bottom: 18px;
+    }
+
+    .sec-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      font-size: 17px;
+      color: var(--grey);
+      max-width: 540px;
+      line-height: 1.7;
+    }
+
+    .sec-header { margin-bottom: 60px; }
+
+    /* reveal initial state — GSAP overrides these */
+    .reveal { opacity: 0; transform: translateY(28px); }
+
+    /* ═══════════════════════════════════════════════════════
+       NAVIGATION
+    ═══════════════════════════════════════════════════════ */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 900;
+      padding: 22px 0;
+      min-height: 80px;
+      transition: background 0.4s, box-shadow 0.4s, padding 0.4s;
+    }
+    #nav.scrolled {
+      background: #fff;
+      box-shadow: 0 2px 24px rgba(5,22,80,0.09);
+      padding: 14px 0;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .nav-logo img { height: 64px; width: auto; display: block; object-fit: contain; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 34px;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(245,254,253,0.9);
+      transition: color 0.2s;
+    }
+    #nav.scrolled .nav-links a { color: var(--navy); }
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      background: var(--gold);
+      color: #fff !important;
+      padding: 10px 24px;
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--gold-dark) !important; color: #fff !important; }
+    #nav.scrolled .nav-cta { color: #fff !important; }
+
+    /* Hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; padding: 4px; }
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--near-white);
+      border-radius: 1px;
+      transition: background 0.3s;
+    }
+    #nav.scrolled .hamburger span { background: var(--navy); }
+
+    /* Mobile overlay */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--navy);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 38px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      font-weight: 600;
+      color: var(--near-white);
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .menu-close {
+      position: absolute;
+      top: 28px; right: 44px;
+      color: var(--near-white);
+      font-size: 30px;
+      line-height: 1;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .menu-close:hover { opacity: 1; }
+
+    /* ═══════════════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════════════ */
+    #hero {
+      position: relative;
+      height: 100vh;
+      background: #000;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Animated gold grid */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .hero-grid svg {
+      position: absolute;
+      inset: -80px;
+      width: calc(100% + 160px);
+      height: calc(100% + 160px);
+      opacity: 0.15;
+      animation: gridDrift 24s linear infinite;
+    }
+    @keyframes gridDrift {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(60px, 60px); }
+    }
+
+    /* Gold corner brackets */
+    .bracket {
+      position: absolute;
+      width: 56px;
+      height: 56px;
+      pointer-events: none;
+    }
+    .bracket.tl { top: 88px; left: 48px; border-top: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); }
+    .bracket.br { bottom: 88px; right: 48px; border-bottom: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      padding: 140px 0 120px;
+    }
+
+    .hero-eyebrow {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--gold);
+      margin-bottom: 22px;
+      opacity: 0;
+    }
+
+    .hero-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      font-size: clamp(52px, 8.5vw, 100px);
+      line-height: 1.03;
+      color: var(--near-white);
+      margin-bottom: 30px;
+      perspective: 800px;
+    }
+    .hero-headline .line { display: block; overflow: hidden; }
+    .hero-headline .word { display: inline-block; opacity: 0; }
+
+    .hero-sub {
+      font-weight: 300;
+      font-size: 18px;
+      color: rgba(245,254,253,0.58);
+      max-width: 500px;
+      line-height: 1.75;
+      margin-bottom: 48px;
+      opacity: 0;
+    }
+
+    .hero-btns { display: flex; gap: 18px; flex-wrap: wrap; opacity: 0; }
+
+    .btn-gold {
+      display: inline-block;
+      background: var(--gold);
+      color: #fff;
+      padding: 16px 34px;
+      border-radius: 2px;
+      font-size: 15px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .btn-gold:hover { background: var(--gold-dark); color: #fff; }
+
+    .btn-outline {
+      display: inline-block;
+      background: transparent;
+      color: var(--near-white);
+      padding: 15px 34px;
+      border-radius: 2px;
+      border: 1px solid rgba(245,254,253,0.45);
+      font-size: 15px;
+      font-weight: 400;
+      transition: border-color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--near-white); }
+
+    /* Scroll arrow */
+    .scroll-arrow {
+      position: absolute;
+      bottom: 38px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .arrow-line {
+      width: 1px;
+      height: 36px;
+      background: rgba(245,254,253,0.25);
+    }
+    .arrow-chevron {
+      width: 10px; height: 10px;
+      border-right: 1.5px solid rgba(245,254,253,0.35);
+      border-bottom: 1.5px solid rgba(245,254,253,0.35);
+      transform: rotate(45deg);
+      animation: bounce 1.6s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50%       { transform: rotate(45deg) translateY(5px); }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       STATS — 3 columns, no pin
+    ═══════════════════════════════════════════════════════ */
+    #stats {
+      background: var(--navy);
+      padding: 100px 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .stats-scene {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stat-reveal {
+      flex: 1;
+      text-align: center;
+      padding: 0 40px;
+      position: relative;
+    }
+    /* Thin gold vertical divider between columns */
+    .stat-reveal:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 55%;
+      width: 1px;
+      background: rgba(212, 168, 67, 0.35);
+    }
+    .stat-line-bar {
+      height: 1px;
+      background: var(--gold);
+      width: 60px;
+      margin: 0 auto 28px;
+      transform-origin: center;
+      transform: scaleX(0);
+    }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(80px, 11vw, 140px);
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      display: block;
+    }
+    .stat-label {
+      font-size: 18px;
+      font-weight: 600;
+      color: #F5FEFD;
+      letter-spacing: 0.08em;
+      margin-top: 20px;
+      display: block;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       SERVICES
+    ═══════════════════════════════════════════════════════ */
+    #services {
+      background: var(--near-white);
+      padding: var(--pad-y) 0;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .svc-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-left: 3px solid transparent;
+      border-radius: 4px;
+      padding: 42px 38px;
+      transition: border-left-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+    .svc-card:hover {
+      border-left-color: var(--gold);
+      box-shadow: 0 10px 36px rgba(5,22,80,0.09);
+      transform: translateY(-3px);
+    }
+    .svc-icon {
+      width: 46px; height: 46px;
+      color: var(--navy);
+      margin-bottom: 26px;
+      transition: color 0.25s;
+    }
+    .svc-card:hover .svc-icon { color: var(--gold); }
+    .svc-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--navy);
+      margin-bottom: 14px;
+    }
+    .svc-body {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--grey);
+      line-height: 1.75;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       PROJECTS
+    ═══════════════════════════════════════════════════════ */
+    #projects {
+      background: var(--soft-mint);
+      padding: var(--pad-y) 0;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 36px;
+    }
+    .filter-btn {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--grey);
+      padding: 8px 20px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      background: transparent;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .filter-btn::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 2px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .filter-btn.active { color: var(--navy); border-color: transparent; }
+    .filter-btn.active::after { transform: scaleX(1); }
+    .filter-btn:hover:not(.active) { color: var(--navy); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 48px;
+    }
+    .proj-card {
+      background: #fff;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .proj-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 48px rgba(5,22,80,0.13);
+    }
+
+    /* image + overlay */
+    .proj-img-wrap {
+      position: relative;
+      height: 220px;
+      overflow: hidden;
+      background: var(--navy);
+    }
+    .proj-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.45s ease;
+    }
+    .proj-card:hover .proj-img-wrap img { transform: scale(1.06); }
+    .proj-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(5,22,80,0.88);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 20px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .proj-card:hover .proj-overlay { opacity: 1; }
+    .ov-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1.2;
+    }
+    .ov-type {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(245,254,253,0.65);
+    }
+
+    /* card body */
+    .proj-info { padding: 20px 22px 22px; }
+    .proj-cat {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--grey);
+      margin-bottom: 5px;
+    }
+    .proj-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: var(--navy);
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+    .proj-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .proj-loc {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--grey);
+      flex: 1;
+      min-width: 0;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 2px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge.ongoing  { background: var(--gold); color: #fff; }
+    .badge.completed { background: var(--soft-mint); color: #2d6a4f; border: 1px solid rgba(45,106,79,0.2); }
+
+    /* ═══════════════════════════════════════════════════════
+       TESTIMONIALS
+    ═══════════════════════════════════════════════════════ */
+    #testimonials {
+      background: var(--navy);
+      padding: var(--pad-y) 0;
+    }
+    #testimonials .eyebrow    { color: var(--gold); }
+    #testimonials .sec-heading { color: var(--near-white); }
+
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: stretch;
+      gap: 28px;
+      margin-top: 56px;
+      perspective: 800px;
+    }
+
+    /* Card */
+    .testi-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(212,168,67,0.20);
+      border-left: 3px solid var(--gold);
+      border-radius: 4px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+    .testi-card:hover {
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.30);
+      transform: translateY(-4px);
+    }
+
+    /* Stars */
+    .testi-stars {
+      display: block;
+      font-size: 18px;
+      color: var(--gold);
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+
+    /* Quote — CSS curly quotes, no marks in HTML */
+    .testi-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.75;
+      color: rgba(245,254,253,0.90);
+      margin: 0;
+      flex: 1;
+    }
+    .testi-quote::before {
+      content: '\201C';
+      color: var(--gold);
+      font-size: 48px;
+      line-height: 0;
+      vertical-align: -0.4em;
+      margin-right: 4px;
+    }
+    .testi-quote::after {
+      content: '\201D';
+      color: var(--gold);
+    }
+
+    /* Divider */
+    .testi-divider {
+      height: 1px;
+      background: rgba(212,168,67,0.20);
+      margin: 28px 0;
+      flex-shrink: 0;
+    }
+
+    /* Footer row */
+    .testi-footer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .testi-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--navy);
+      flex-shrink: 0;
+    }
+    .testi-name {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      color: #F5FEFD;
+      display: block;
+    }
+    .testi-role {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      font-size: 13px;
+      color: rgba(245,254,253,0.55);
+      display: block;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       ABOUT
+    ═══════════════════════════════════════════════════════ */
+    #about {
+      background: #fff;
+      padding: var(--pad-y) 0;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 88px;
+      align-items: start;
+    }
+    .about-text .sec-heading { margin-bottom: 6px; }
+
+    .about-open {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.3;
+      margin-bottom: 30px;
+    }
+    .about-body {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--grey);
+      line-height: 1.8;
+      margin-bottom: 36px;
+    }
+    .about-body p + p { margin-top: 16px; }
+
+    .about-sub { margin-bottom: 30px; }
+    .about-sub-head {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .about-sub p {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--grey);
+      line-height: 1.8;
+    }
+    .about-sub p + p { margin-top: 12px; }
+
+    .vm-block {
+      background: var(--soft-mint);
+      border-left: 3px solid var(--gold);
+      border-radius: 4px;
+      padding: 30px 28px;
+      margin-top: 36px;
+    }
+    .vm-row { margin-bottom: 20px; }
+    .vm-row:last-child { margin-bottom: 0; }
+    .vm-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .vm-text {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--grey);
+      line-height: 1.75;
+    }
+
+    .about-img-wrap {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #projects .sec-heading .ch { display: inline-block; }
+    .about-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Placeholder for missing about.jpg */
+    .about-placeholder {
+      width: 100%;
+      height: 100%;
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+    .about-placeholder svg { opacity: 0.25; color: var(--near-white); }
+    .about-placeholder span {
+      font-size: 12px;
+      color: rgba(245,254,253,0.25);
+      letter-spacing: 0.06em;
+      font-style: italic;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       CONTACT
+    ═══════════════════════════════════════════════════════ */
+    #contact {
+      background: var(--near-white);
+      padding: var(--pad-y) 0;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 88px;
+      margin-top: 56px;
+    }
+
+    /* Details */
+    .detail-group { margin-bottom: 34px; }
+    .detail-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 7px;
+    }
+    .detail-val {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--near-black);
+      line-height: 1.65;
+    }
+    .detail-val a { color: var(--navy); transition: color 0.2s; }
+    .detail-val a:hover { color: var(--gold); }
+
+    /* Form */
+    .cform { display: flex; flex-direction: column; gap: 30px; }
+
+    .field { position: relative; }
+    .field label {
+      position: absolute;
+      top: 14px; left: 0;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--grey);
+      pointer-events: none;
+      transition: top 0.2s, font-size 0.2s, color 0.2s;
+      transform-origin: left top;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(5,22,80,0.35);
+      border-radius: 0;
+      padding: 14px 0 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: var(--near-black);
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .field textarea { resize: vertical; min-height: 96px; }
+    .field select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5' fill='none' stroke='%23444' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 2px center;
+      padding-right: 18px;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-bottom-width: 2px;
+      border-bottom-color: var(--gold);
+    }
+
+    /* Float label via CSS (placeholder=" " trick) */
+    .field input:focus ~ label,
+    .field input:not(:placeholder-shown) ~ label,
+    .field textarea:focus ~ label,
+    .field textarea:not(:placeholder-shown) ~ label,
+    .field.sel-active label {
+      top: -12px;
+      font-size: 11px;
+      color: var(--gold);
+    }
+    /* Focused state class for select */
+    .field.sel-active select { border-bottom-color: var(--gold); border-bottom-width: 2px; }
+
+    .submit-btn {
+      background: var(--gold);
+      color: #fff;
+      width: 100%;
+      padding: 16px;
+      border-radius: 2px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .submit-btn:hover { background: var(--gold-dark); }
+
+    .form-success {
+      display: none;
+      font-size: 14px;
+      color: #2d6a4f;
+      background: var(--soft-mint);
+      border-left: 3px solid #2d6a4f;
+      padding: 14px 18px;
+      border-radius: 4px;
+    }
+
+    .contact-form-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 32px;
+      color: var(--navy);
+      margin-top: 48px;
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .linkedin-link {
+      display: inline-flex;
+      align-items: center;
+      color: var(--navy);
+      transition: color 0.3s ease, transform 0.3s ease;
+      text-decoration: none;
+    }
+    .linkedin-link:hover {
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+    .linkedin-link svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════════════ */
+    #footer {
+      background: var(--navy);
+      padding: 76px 0 0;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr;
+      gap: 56px;
+      padding-bottom: 60px;
+    }
+    .footer-logo img { height: 46px; width: auto; margin-bottom: 14px; }
+    .footer-tagline {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(245,254,253,0.42);
+      line-height: 1.6;
+      max-width: 220px;
+    }
+    .footer-col-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 22px;
+    }
+    .footer-nav { display: flex; flex-direction: column; gap: 13px; }
+    .footer-nav a {
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(245,254,253,0.55);
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: var(--gold); }
+
+    .footer-citem {
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(245,254,253,0.55);
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+    .footer-citem a { color: rgba(245,254,253,0.55); transition: color 0.2s; }
+    .footer-citem a:hover { color: var(--gold); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(245,254,253,0.09);
+      padding: 22px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-copy { font-size: 13px; color: rgba(245,254,253,0.28); }
+    .footer-li { color: rgba(245,254,253,0.38); transition: color 0.2s; }
+    .footer-li:hover { color: var(--gold); }
+
+    /* ═══════════════════════════════════════════════════════
+       MARQUEE STRIP
+    ═══════════════════════════════════════════════════════ */
+    .marquee-strip {
+      background: var(--gold);
+      height: 48px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      white-space: nowrap;
+      animation: marquee 30s linear infinite;
+      will-change: transform;
+    }
+    .marquee-strip:hover .marquee-track { animation-play-state: paused; }
+    .marquee-text {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--navy);
+      white-space: nowrap;
+      flex-shrink: 0;
+      padding-right: 60px;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .projects-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .services-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      :root { --pad-y: 64px; }
+
+      /* ── Global mobile safety ─────────────────────────────── */
+      body, html { overflow-x: hidden; }
+      section { overflow-x: hidden; }
+      .container {
+        padding-left: 20px;
+        padding-right: 20px;
+        max-width: 100%;
+      }
+
+      /* ── Navigation ──────────────────────────────────────── */
+      #nav {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        min-height: 64px;
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .nav-logo img {
+        height: 44px;
+        width: auto;
+        max-width: 120px;
+        object-fit: contain;
+      }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+
+      /* ── Hero ────────────────────────────────────────────── */
+      .hero-content {
+        padding-top: 100px;
+        padding-bottom: 60px;
+      }
+      .hero-headline {
+        font-size: clamp(36px, 10vw, 52px);
+        line-height: 1.15;
+      }
+      .hero-sub {
+        font-size: 15px;
+        line-height: 1.65;
+      }
+      .hero-btns {
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+      }
+      .hero-btns a, .hero-btns button {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+      .bracket.tl { top: 80px; left: 20px; }
+      .bracket.br { bottom: 60px; right: 20px; }
+
+      /* ── Stats ───────────────────────────────────────────── */
+      #stats { padding: 60px 0; }
+      .stats-scene { flex-direction: column; }
+      .stat-reveal { padding: 40px 20px; }
+      .stat-reveal:not(:last-child)::after { display: none; }
+      .stat-reveal:not(:last-child) { border-bottom: 1px solid rgba(212,168,67,0.25); }
+      .stat-num { font-size: 96px; }
+      .stat-label { font-size: 16px; }
+
+      /* ── Services ────────────────────────────────────────── */
+      .services-grid { grid-template-columns: 1fr; }
+
+      /* ── Projects ────────────────────────────────────────── */
+      .projects-grid { grid-template-columns: 1fr; }
+
+      /* ── Testimonials ────────────────────────────────────── */
+      #testimonials { overflow: hidden; }
+      .testi-grid {
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+      .testi-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 28px 24px;
+      }
+      .testi-quote { font-size: 20px; line-height: 1.7; }
+
+      /* ── About ───────────────────────────────────────────── */
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-img-wrap { position: static; height: 320px; order: 2; }
+
+      /* ── Contact ─────────────────────────────────────────── */
+      .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .contact-form-heading { font-size: 26px; }
+      #contact input,
+      #contact textarea,
+      #contact select {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+      .submit-btn { width: 100%; padding: 16px; }
+
+      /* ── Footer ──────────────────────────────────────────── */
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .footer-tagline { max-width: 100%; }
+      .footer-nav { align-items: center; }
+      .footer-bottom { flex-direction: column; gap: 14px; }
+    }
+
+    @media (max-width: 480px) {
+      .testi-grid { gap: 20px; }
+      .sec-header { margin-bottom: 44px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       UPGRADE 1 — HERO BACKGROUND IMAGE
+    ═══════════════════════════════════════════════════════ */
+    .hero-bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 0;
+      will-change: transform;
+      transform-origin: center center;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(5, 22, 80, 0.60);
+      z-index: 1;
+      pointer-events: none;
+    }
+    /* Lift existing hero layers above the new overlay */
+    .hero-grid    { z-index: 2; }
+    .bracket      { z-index: 3; }
+    .scroll-arrow { z-index: 3; }
+
+    /* ═══════════════════════════════════════════════════════
+       UPGRADE 2 — STATS GRADIENT BARS
+    ═══════════════════════════════════════════════════════ */
+    .gradient-bars-container {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: 0 20px;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .gradient-bar {
+      flex: 1;
+      max-width: calc(100% / 15 - 6px);
+      height: 100%;
+      background: linear-gradient(
+        to top,
+        rgba(212, 168, 67, 0.22) 0%,
+        rgba(212, 168, 67, 0.07) 55%,
+        transparent 100%
+      );
+      transform-origin: center;
+      transform: scaleY(var(--bar-scale, 0.3));
+      animation: pulseBar 2.8s ease-in-out infinite alternate;
+      animation-delay: var(--bar-delay, 0s);
+    }
+    @keyframes pulseBar {
+      from { transform: scaleY(var(--bar-scale, 0.3)); }
+      to   { transform: scaleY(calc(var(--bar-scale, 0.3) * 1.14)); }
+    }
+    /* Raise stat content above bars */
+    .stats-scene { z-index: 1; }
+
+    /* ═══════════════════════════════════════════════════════
+       UPGRADE 3 — BUTTON HOVER GLOW
+    ═══════════════════════════════════════════════════════ */
+    .hover-btn {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .btn-glow-circle {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.30) 0%, transparent 68%);
+      transform: translate(-50%, -50%) scale(0);
+      pointer-events: none;
+      transition: transform 0.32s ease, opacity 0.32s ease;
+      opacity: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       UPGRADE 4 — PROJECTS REBUILD
+    ═══════════════════════════════════════════════════════ */
+    /* Split header */
+    .proj-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 60px;
+      margin-bottom: 56px;
+    }
+    .proj-header-left {
+      max-width: 400px;
+      flex-shrink: 0;
+    }
+    .proj-header-left .eyebrow { margin-bottom: 14px; }
+    .proj-header-left .sec-heading { margin-bottom: 0; }
+    .proj-header-right {
+      flex: 1;
+      padding-top: 6px;
+    }
+    .proj-header-right .sec-sub { max-width: 100%; margin-bottom: 24px; }
+    .proj-header-right .filter-bar { margin-top: 0; }
+
+    /* New 2-column grid */
+    .proj-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+
+    /* Override old card image height with 16:9 aspect ratio */
+    .proj-grid .proj-img-wrap {
+      height: auto;
+      aspect-ratio: 16 / 9;
+    }
+
+    /* Card body */
+    .proj-body {
+      padding: 20px 22px 22px;
+    }
+    .proj-type-loc {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--grey);
+      margin-bottom: 7px;
+    }
+    .proj-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--navy);
+      margin-bottom: 16px;
+      line-height: 1.25;
+    }
+    .proj-footer {
+      display: flex;
+      align-items: center;
+    }
+    .proj-badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .proj-badge.ongoing   { background: var(--gold); color: #fff; }
+    .proj-badge.completed { background: var(--soft-mint); color: #2d6a4f; border: 1px solid rgba(45,106,79,0.2); }
+
+    /* Filter utility — toggled by JS, no GSAP display hacks needed */
+    .is-filtered-out { display: none !important; }
+
+    /* Responsive overrides for new project layout */
+    @media (max-width: 900px) {
+      .proj-header { flex-direction: column; gap: 28px; }
+      .proj-header-left { max-width: 100%; }
+    }
+    @media (max-width: 768px) {
+      .proj-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div id="smooth-wrapper"><div id="smooth-content">
+
+<!-- ═══ NAVIGATION ═══════════════════════════════════════════ -->
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <img src="project-logo%20.png" alt="KL Associate">
+      </a>
+      <div class="nav-links">
+        <a href="#hero">Home</a>
+        <a href="#services">Services</a>
+        <a href="#projects">Projects</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="#contact" class="nav-cta hover-btn">Get a Quote</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu overlay -->
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true">
+  <button class="menu-close" id="menuClose" aria-label="Close menu">&#x2715;</button>
+  <a href="#hero"     class="m-link">Home</a>
+  <a href="#services" class="m-link">Services</a>
+  <a href="#projects" class="m-link">Projects</a>
+  <a href="#about"    class="m-link">About</a>
+  <a href="#contact"  class="m-link">Contact</a>
+</div>
+
+
+<!-- ═══ HERO ═════════════════════════════════════════════════ -->
+<section id="hero">
+  <!-- Full-bleed background photo -->
+  <img id="heroBgImg" class="hero-bg-img" src="Hero image.png" alt="" aria-hidden="true">
+  <!-- Dark overlay for readability -->
+  <div class="hero-overlay" aria-hidden="true"></div>
+
+  <!-- Animated gold grid background -->
+  <div class="hero-grid" data-speed="0.8" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="gridPat" width="60" height="60" patternUnits="userSpaceOnUse">
+          <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#D4A843" stroke-width="0.6"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#gridPat)"/>
+    </svg>
+  </div>
+
+  <!-- Corner brackets -->
+  <div class="bracket tl" aria-hidden="true"></div>
+  <div class="bracket br" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="hero-content">
+      <span class="hero-eyebrow">Chennai's Trusted Construction Partner</span>
+      <h1 class="hero-headline">
+        <span class="line">Building Strength,</span>
+        <span class="line">Delivering Excellence.</span>
+      </h1>
+      <p class="hero-sub">From industrial facilities to commercial landmarks, KL Associate engineers spaces that endure, with 30+ years of precision behind every project.</p>
+      <div class="hero-btns">
+        <a href="#projects" class="btn-gold hover-btn">View Our Work</a>
+        <a href="#contact"  class="btn-outline hover-btn">Get in Touch</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-arrow" aria-hidden="true">
+    <div class="arrow-line"></div>
+    <div class="arrow-chevron"></div>
+  </div>
+</section>
+
+
+<!-- ═══ STATS BAR ══════════════════════════════════════════════ -->
+<section id="stats">
+  <!-- Gradient bars — filled by JS -->
+  <div class="gradient-bars-container" aria-hidden="true"></div>
+  <div class="stats-scene">
+    <div class="stat-reveal">
+      <div class="stat-line-bar"></div>
+      <span class="stat-num">30+</span>
+      <span class="stat-label">Years of Experience</span>
+    </div>
+    <div class="stat-reveal">
+      <div class="stat-line-bar"></div>
+      <span class="stat-num">60+</span>
+      <span class="stat-label">Projects Completed</span>
+    </div>
+    <div class="stat-reveal">
+      <div class="stat-line-bar"></div>
+      <span class="stat-num">60+</span>
+      <span class="stat-label">Satisfied Clients</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ SERVICES ══════════════════════════════════════════════ -->
+<section id="services">
+  <div class="container">
+    <div class="sec-header reveal">
+      <span class="eyebrow">What We Build</span>
+      <h2 class="sec-heading">Four Pillars of Our Craft</h2>
+      <p class="sec-sub">Every structure we raise is a commitment to quality, timeline, and the people who will use it.</p>
+    </div>
+
+    <div class="services-grid">
+
+      <!-- Card 1 — Commercial -->
+      <div class="svc-card">
+        <svg class="svc-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="12" width="36" height="30" rx="1"/>
+          <path d="M6 20h36M6 28h36M6 36h36M18 12v30M30 12v30"/>
+          <path d="M2 12h44" stroke-width="2"/>
+        </svg>
+        <h3 class="svc-title">Commercial Construction</h3>
+        <p class="svc-body">Retail spaces, office complexes, commercial plazas, we build commercial environments that are functional, durable, and built to impress clients and customers alike.</p>
+      </div>
+
+      <!-- Card 3 — Industrial -->
+      <div class="svc-card">
+        <svg class="svc-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="22" width="16" height="20" rx="1"/>
+          <rect x="28" y="14" width="16" height="28" rx="1"/>
+          <path d="M20 22V14h8v8M4 30h16M28 22h16"/>
+          <path d="M8 36h4M32 28h4M32 36h4"/>
+          <path d="M8 14V8h8v6"/>
+        </svg>
+        <h3 class="svc-title">Industrial Construction</h3>
+        <p class="svc-body">Manufacturing plants, MDMF facilities, research centers. We understand the exacting standards of industrial build-outs. Precision engineering, on time, every time.</p>
+      </div>
+
+      <!-- Card 4 — Renovation -->
+      <div class="svc-card">
+        <svg class="svc-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M34 6l4 4-3 3 1 1-14 14-1-1-3 3-4-4 3-3-1-1L30 8l1 1 3-3z"/>
+          <path d="M29 19l10 10a3.54 3.54 0 01-5 5L24 24"/>
+          <path d="M8 38l8 4M10 34l8 4"/>
+          <path d="M10 40l-4 4"/>
+        </svg>
+        <h3 class="svc-title">Renovation &amp; Remodeling</h3>
+        <p class="svc-body">Breathing new life into existing structures. Whether it's an upgrade, an expansion, or a complete transformation, we renovate with the same rigor we build.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ PROJECTS ═══════════════════════════════════════════════ -->
+<section id="projects">
+  <div class="container">
+
+    <!-- Split header: heading left, description + filter right -->
+    <div class="proj-header">
+      <div class="proj-header-left">
+        <span class="eyebrow">Our Portfolio</span>
+        <h2 class="sec-heading">Work That Speaks for Itself</h2>
+      </div>
+      <div class="proj-header-right">
+        <p class="sec-sub">Ten projects across Chennai and Tamil Nadu, each one a benchmark we set for ourselves.</p>
+        <div class="filter-bar" role="group" aria-label="Filter projects">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="Commercial">Commercial</button>
+          <button class="filter-btn" data-filter="Industrial">Industrial</button>
+          <button class="filter-btn" data-filter="Research">Research</button>
+          <button class="filter-btn" data-filter="Residential">Residential</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2-column 16:9 card grid -->
+    <div class="proj-grid" id="projectsGrid">
+
+      <!-- 1 · Morrisons -->
+      <article class="proj-card" data-filter="Industrial">
+        <div class="proj-img-wrap">
+          <img src="project morrison.jpg" alt="Morrisons, Medical Device Manufacturing Factory" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Industrial · SIPCOT Medical Devices Park, Oragadam</p>
+          <h3 class="proj-title">Morrisons Lifecare Pvt. Ltd.</h3>
+          <div class="proj-footer">
+            <span class="proj-badge ongoing">Ongoing</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2 · VIM Alloy -->
+      <article class="proj-card" data-filter="Industrial">
+        <div class="proj-img-wrap">
+          <img src="project-vim-alloy.jpg" alt="VIM Alloy, Factory" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Industrial · Vallam</p>
+          <h3 class="proj-title">VIM Alloy Private Limited</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3 · BRF 2 -->
+      <article class="proj-card" data-filter="Research">
+        <div class="proj-img-wrap">
+          <img src="project-brf2.jpg" alt="BRF 2, Research Center" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Research · Sendadu, Tiruvallur</p>
+          <h3 class="proj-title">Bioscience Research Foundation</h3>
+          <div class="proj-footer">
+            <span class="proj-badge ongoing">Ongoing</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 4 · ReDia -->
+      <article class="proj-card" data-filter="Industrial">
+        <div class="proj-img-wrap">
+          <img src="project-redia.jpg" alt="ReDia, MDMF" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Industrial · SIPCOT Medical Devices Park, Oragadam</p>
+          <h3 class="proj-title">ReDia</h3>
+          <div class="proj-footer">
+            <span class="proj-badge ongoing">Ongoing</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 5 · Shri Ram Mart -->
+      <article class="proj-card" data-filter="Commercial">
+        <div class="proj-img-wrap">
+          <img src="project-shriram-mart.jpg" alt="Shri Ram Mart, Commercial Space" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Commercial · Nolambur, Chennai</p>
+          <h3 class="proj-title">Shri Ram Mart</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 6 · Bioscience Research Foundation -->
+      <article class="proj-card" data-filter="Research">
+        <div class="proj-img-wrap">
+          <img src="project-bioscience.jpg" alt="Bioscience Research Foundation, Research Center" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Research · Sriperumbudur</p>
+          <h3 class="proj-title">Bioscience Research Foundation</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 7 · Tirupathi House -->
+      <article class="proj-card" data-filter="Residential">
+        <div class="proj-img-wrap">
+          <img src="project-tirupathi-house.jpg" alt="Tirupathi House, Villa" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Residential · Tirupathi</p>
+          <h3 class="proj-title">Tirupathi House</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 8 · GESCO -->
+      <article class="proj-card" data-filter="Industrial">
+        <div class="proj-img-wrap">
+          <img src="project-gesco.jpg" alt="GESCO, MDMF" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Industrial · SIPCOT Medical Devices Park, Oragadam</p>
+          <h3 class="proj-title">GESCO Healthcare Pvt. Ltd.</h3>
+          <div class="proj-footer">
+            <span class="proj-badge ongoing">Ongoing</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 9 · Church -->
+      <article class="proj-card" data-filter="Commercial">
+        <div class="proj-img-wrap">
+          <img src="project-church.jpg" alt="Church, Sirkali, Chidambaram" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Commercial · Sirkali, Chidambaram</p>
+          <h3 class="proj-title">Church</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 10 · Right Tight Fasteners -->
+      <article class="proj-card" data-filter="Industrial">
+        <div class="proj-img-wrap">
+          <img src="project-right-tight.jpg" alt="Right Tight Fasteners Pvt Ltd, Automobile Manufacturing" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Industrial · Oragadam</p>
+          <h3 class="proj-title">Right Tight Fasteners Pvt Ltd</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ TESTIMONIALS ════════════════════════════════════════════ -->
+<section id="testimonials">
+  <div class="container">
+    <div class="sec-header">
+      <span class="eyebrow">Client Stories</span>
+      <h2 class="sec-heading">What Our Clients Say</h2>
+    </div>
+
+    <div class="testi-grid">
+
+      <!-- Card 1 -->
+      <div class="testi-card">
+        <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+        <blockquote class="testi-quote">KL Associate delivered our manufacturing facility on time and within budget. Their site management and quality of work is something we have rarely seen from any contractor in Tamil Nadu.</blockquote>
+        <div class="testi-divider" aria-hidden="true"></div>
+        <div class="testi-footer">
+          <div class="testi-avatar" aria-hidden="true">P</div>
+          <div>
+            <span class="testi-name">Project Director</span>
+            <span class="testi-role">Manufacturing Client, Tamil Nadu</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="testi-card">
+        <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+        <blockquote class="testi-quote">From foundation to finish, they were transparent about every stage. No surprises, no shortcuts. We are already planning our next project with them.</blockquote>
+        <div class="testi-divider" aria-hidden="true"></div>
+        <div class="testi-footer">
+          <div class="testi-avatar" aria-hidden="true">B</div>
+          <div>
+            <span class="testi-name">Business Owner</span>
+            <span class="testi-role">Commercial Client, Chennai</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="testi-card">
+        <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+        <blockquote class="testi-quote">Our research center was a complex build with very specific requirements. KL Associate understood the brief and executed it with exceptional precision.</blockquote>
+        <div class="testi-divider" aria-hidden="true"></div>
+        <div class="testi-footer">
+          <div class="testi-avatar" aria-hidden="true">O</div>
+          <div>
+            <span class="testi-name">Operations Head</span>
+            <span class="testi-role">Research Institution, Sriperumbudur</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ ABOUT ══════════════════════════════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+
+      <!-- Left: text -->
+      <div class="about-text">
+        <span class="eyebrow reveal">About KL Associate</span>
+        <h2 class="sec-heading reveal">We Didn't Set Out to Just Build Buildings.</h2>
+        <p class="about-open reveal">We set out to build better ones.</p>
+
+        <div class="about-body reveal">
+          <p>KL Associate is a Chennai-based construction company with a reputation built the same way we build everything else, carefully, honestly, and without cutting corners.</p>
+          <p>From the ground up, we have worked on commercial and industrial projects across Chennai and beyond. But what defines us isn't the number of projects we've completed, it's the number of clients who came back for the next one.</p>
+        </div>
+
+        <div class="about-sub reveal">
+          <h3 class="about-sub-head">Who We Are</h3>
+          <p>We are a team of engineers, site managers, and craftsmen who take construction personally. Every project that leaves our hands carries our name, and we treat that responsibility seriously. At KL Associate, there are no small projects, only projects that deserve our full attention.</p>
+        </div>
+
+        <div class="about-sub reveal">
+          <h3 class="about-sub-head">What We Believe</h3>
+          <p>We believe that great construction is mostly invisible. The work that holds a structure together, the foundation, the framework, the finishing, is rarely what people see. But it's everything. That's where we obsess. That's where we refuse to compromise.</p>
+          <p>Timelines are commitments. Budgets are boundaries, not suggestions. Transparency isn't a policy here, it's just how we operate.</p>
+        </div>
+
+        <div class="about-sub reveal">
+          <h3 class="about-sub-head">Our Promise</h3>
+          <p>When you work with KL Associate, you're not hiring a contractor. You're bringing in a partner who will treat your project with the same care we'd give our own. We sign every wall we build. And we make sure it's worth signing.</p>
+        </div>
+
+        <div class="vm-block reveal">
+          <div class="vm-row">
+            <span class="vm-label">Vision</span>
+            <p class="vm-text">To redefine the built environment through timeless, sustainable, and innovative design and construction that inspires communities and enhances quality of life worldwide.</p>
+          </div>
+          <div class="vm-row">
+            <span class="vm-label">Mission</span>
+            <p class="vm-text">To deliver innovative, sustainable, and high-quality construction solutions through excellence, integrity, and collaboration, creating lasting value for our clients and communities.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: image -->
+      <div class="about-img-wrap" id="aboutImg">
+        <img src="about.jpg" alt="KL Associate — Our Team and Work">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ CONTACT ════════════════════════════════════════════════ -->
+<section id="contact">
+  <div class="container">
+    <div class="sec-header reveal">
+      <span class="eyebrow">Let's Build Together</span>
+      <h2 class="sec-heading">Start Your Project</h2>
+    </div>
+
+    <div class="contact-grid">
+
+      <!-- Left: Details -->
+      <div class="reveal">
+        <div class="detail-group">
+          <span class="detail-label">Address</span>
+          <p class="detail-val">
+            No. 415, MIG Ground Floor,<br>
+            4th Cross Road,<br>
+            Mogappair Eri Scheme,<br>
+            Chennai - 600 037
+          </p>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Phone</span>
+          <p class="detail-val"><a href="tel:+919840950949">+91 98409 50949</a></p>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Email</span>
+          <p class="detail-val"><a href="mailto:klassociate6@gmail.com">klassociate6@gmail.com</a></p>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">LinkedIn</span>
+          <p class="detail-val">
+            <a href="https://www.linkedin.com/company/kl-associate/"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="linkedin-link"
+               aria-label="KL Associate on LinkedIn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Form -->
+      <div class="reveal">
+        <h3 class="contact-form-heading">Send Us a Message</h3>
+        <form class="cform" id="cForm" novalidate>
+
+          <div class="field">
+            <input type="text" id="f-name" name="name" placeholder=" " required autocomplete="name">
+            <label for="f-name">Full Name *</label>
+          </div>
+
+          <div class="field">
+            <input type="email" id="f-email" name="email" placeholder=" " required autocomplete="email">
+            <label for="f-email">Email Address *</label>
+          </div>
+
+          <div class="field">
+            <input type="tel" id="f-phone" name="phone" placeholder=" " autocomplete="tel">
+            <label for="f-phone">Phone Number</label>
+          </div>
+
+          <div class="field" id="f-type-field">
+            <select id="f-type" name="project_type">
+              <option value="" disabled selected></option>
+              <option value="Residential">Residential</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Industrial">Industrial</option>
+              <option value="Renovation">Renovation</option>
+              <option value="Other">Other</option>
+            </select>
+            <label for="f-type">Project Type</label>
+          </div>
+
+          <div class="field">
+            <textarea id="f-msg" name="message" placeholder=" " rows="4"></textarea>
+            <label for="f-msg">Message / Project Brief</label>
+          </div>
+
+          <button type="submit" class="submit-btn hover-btn">Send Enquiry</button>
+          <div class="form-success" id="fSuccess" role="status">
+            Thank you! We'll be in touch within 24 hours.
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ FOOTER ═════════════════════════════════════════════════ -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-grid">
+
+      <!-- Logo + tagline -->
+      <div>
+        <div class="footer-logo">
+          <img src="project-logo%20.png" alt="KL Associate">
+        </div>
+        <p class="footer-tagline">Building Strength, Delivering Excellence</p>
+      </div>
+
+      <!-- Nav links -->
+      <div>
+        <span class="footer-col-label">Navigation</span>
+        <ul class="footer-nav">
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact snapshot -->
+      <div>
+        <span class="footer-col-label">Contact</span>
+        <p class="footer-citem"><a href="tel:+919840950949">+91 98409 50949</a></p>
+        <p class="footer-citem"><a href="mailto:klassociate6@gmail.com">klassociate6@gmail.com</a></p>
+        <p class="footer-citem">Chennai, Tamil Nadu</p>
+      </div>
+
+    </div>
+
+    <!-- Marquee strip -->
+    <div class="marquee-strip" aria-hidden="true">
+      <div class="marquee-track">
+        <span class="marquee-text">Building Strength, Delivering Excellence &nbsp;·&nbsp; KL Associate &nbsp;·&nbsp; Chennai &nbsp;·&nbsp; 30+ Years &nbsp;·&nbsp; Built Without Shortcuts &nbsp;·&nbsp;</span>
+        <span class="marquee-text">Building Strength, Delivering Excellence &nbsp;·&nbsp; KL Associate &nbsp;·&nbsp; Chennai &nbsp;·&nbsp; 30+ Years &nbsp;·&nbsp; Built Without Shortcuts &nbsp;·&nbsp;</span>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2025 KL Associate. All rights reserved.</p>
+      <a href="https://www.linkedin.com/company/kl-associate/" target="_blank" rel="noopener noreferrer" class="footer-li" aria-label="KL Associate on LinkedIn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════ -->
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  if (typeof ScrollSmoother !== 'undefined') gsap.registerPlugin(ScrollSmoother);
+
+  const isMobile = window.innerWidth < 768;
+
+  /* ── 6 · ScrollSmoother ──────────────────────────────────── */
+  let smoother = null;
+  if (!isMobile && typeof ScrollSmoother !== 'undefined') {
+    smoother = ScrollSmoother.create({
+      wrapper: '#smooth-wrapper',
+      content: '#smooth-content',
+      smooth: 1.2,
+      effects: true,
+      normalizeScroll: true
+    });
+  }
+
+  /* ── Mobile ScrollTrigger config ────────────────────────── */
+  if (isMobile) {
+    ScrollTrigger.normalizeScroll(false);
+    ScrollTrigger.config({ ignoreMobileResize: true });
+  }
+  ScrollTrigger.refresh();
+  window.addEventListener('resize', () => { ScrollTrigger.refresh(); });
+
+  /* ── 1 · Hero — Cinematic Word Reveal ────────────────────── */
+  document.querySelectorAll('.hero-headline .line').forEach(line => {
+    const text = line.textContent.trim();
+    line.innerHTML = text.split(/\s+/).map(w => `<span class="word">${w}</span>`).join(' ');
+  });
+
+  const heroWords = gsap.utils.toArray('.hero-headline .word');
+  gsap.set(heroWords,       { opacity: 0, y: 60, rotateX: 90, transformOrigin: 'top center' });
+  gsap.set('.hero-eyebrow', { opacity: 0, y: 20 });
+  gsap.set('.hero-sub',     { opacity: 0, y: 20 });
+  gsap.set('.hero-btns',    { opacity: 0, y: 18 });
+
+  gsap.timeline()
+    .to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0.25)
+    .to(heroWords, {
+      opacity: 1, y: 0, rotateX: 0,
+      duration: 0.7, stagger: 0.08, ease: 'back.out(1.4)',
+      transformOrigin: 'top center'
+    }, 0.6)
+    .to('.hero-sub',  { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.15')
+    .to('.hero-btns', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '+=0.1');
+
+  /* ── Upgrade 1 · Hero bg zoom (all devices) ─────────────── */
+  gsap.to('#heroBgImg', {
+    scale: 1.18, ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.5 }
+  });
+
+  /* ── Hero → dissolve (desktop only) ────────────────────── */
+  if (!isMobile) {
+    gsap.to('#hero', {
+      opacity: 0, ease: 'none',
+      scrollTrigger: { trigger: '#hero', start: 'bottom 20%', end: 'bottom top', scrub: true }
+    });
+  }
+
+  /* ── 2 · Stats — gradient bars + scroll entrance + count-up */
+  ;(function () {
+    /* Generate 15 gradient bars */
+    const barsContainer = document.querySelector('.gradient-bars-container');
+    if (barsContainer) {
+      const numBars = 15, center = (numBars - 1) / 2;
+      for (let i = 0; i < numBars; i++) {
+        const dist  = Math.abs(i - center) / center;
+        const scale = parseFloat((1 - dist * 0.65).toFixed(3));
+        const bar   = document.createElement('div');
+        bar.className = 'gradient-bar';
+        bar.style.setProperty('--bar-scale', scale);
+        bar.style.setProperty('--bar-delay', `${(i * 0.18).toFixed(2)}s`);
+        barsContainer.appendChild(bar);
+      }
+    }
+
+    const statRevs  = gsap.utils.toArray('.stat-reveal');
+    const statLines = gsap.utils.toArray('.stat-line-bar');
+    const statNums  = document.querySelectorAll('.stat-num');
+
+    /* Parse targets from existing text ("30+" → 30), then pre-zero */
+    const targets = Array.from(statNums).map(el => parseInt(el.textContent));
+    statNums.forEach(el => { el.textContent = '0'; });
+
+    /* Initial hidden state */
+    gsap.set(statRevs,  { y: 40, opacity: 0 });
+    gsap.set(statLines, { scaleX: 0 });
+
+    /* GSAP entrance — column slide-in + gold line bars (ScrollTrigger) */
+    ScrollTrigger.create({
+      trigger: '#stats',
+      start: 'top 75%',
+      once: true,
+      onEnter() {
+        gsap.to(statRevs,  { y: 0, opacity: 1, duration: 0.8, ease: 'power2.out', stagger: 0.15 });
+        gsap.to(statLines, { scaleX: 1, duration: 0.6, ease: 'power2.out', stagger: 0.15 });
+      }
+    });
+
+    /* Count-up — IntersectionObserver works reliably on all devices including mobile */
+    function countUp(el, target, sfx) {
+      const duration  = 2000;
+      const startTime = performance.now();
+      function update(now) {
+        const elapsed  = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased    = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target) + sfx;
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = target + sfx;
+      }
+      requestAnimationFrame(update);
+    }
+
+    let counted = false;
+    const statsSection = document.querySelector('#stats');
+    if (statsSection) {
+      const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !counted) {
+            counted = true;
+            statNums.forEach((el, i) => countUp(el, targets[i], '+'));
+            statsObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3, rootMargin: '0px 0px -50px 0px' });
+      statsObserver.observe(statsSection);
+    }
+  })();
+
+  /* ── 3 · About — sticky image + sequential scroll reveals ── */
+  gsap.to('#aboutImg .about-placeholder, #aboutImg img', {
+    scale: 1.05, ease: 'none',
+    scrollTrigger: { trigger: '#about', start: 'top bottom', end: 'bottom top', scrub: true }
+  });
+
+  /* ── 4 · Projects — New header + card animations ─────────── */
+  gsap.from('#projects .proj-header-left', {
+    opacity: 0, x: -30, duration: 0.8, ease: 'power2.out',
+    scrollTrigger: { trigger: '#projects', start: 'top 82%' }
+  });
+  gsap.from('#projects .proj-header-right', {
+    opacity: 0, x: 30, duration: 0.8, ease: 'power2.out',
+    scrollTrigger: { trigger: '#projects', start: 'top 82%' }
+  });
+  gsap.from('.proj-card', {
+    y: 60, opacity: 0, scale: 0.96,
+    duration: 0.65, stagger: 0.09, ease: 'power3.out',
+    scrollTrigger: { trigger: '#projectsGrid', start: 'top 88%' }
+  });
+
+  /* ── Generic .reveal scroll handler ─────────────────────── */
+  gsap.utils.toArray('.reveal').forEach(el => {
+    gsap.to(el, {
+      opacity: 1, y: 0, duration: 0.85, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+    });
+  });
+
+  /* ── Services cards stagger ──────────────────────────────── */
+  gsap.from('.svc-card', {
+    opacity: 0, y: 36,
+    duration: 0.75, stagger: 0.12, ease: 'power2.out',
+    scrollTrigger: { trigger: '.services-grid', start: 'top 85%' }
+  });
+
+  /* ── Testimonials — heading entrance stagger ─────────────── */
+  gsap.from(['#testimonials .eyebrow', '#testimonials .sec-heading'], {
+    y: 30, opacity: 0, duration: 0.7, ease: 'power2.out', stagger: 0.12,
+    scrollTrigger: { trigger: '#testimonials', start: 'top 80%' }
+  });
+
+  /* ── Testimonials — card entrance with rotateY ────────────── */
+  gsap.from('.testi-card', {
+    y: 60, opacity: 0, scale: 0.96, rotateY: 8,
+    duration: 0.65, stagger: 0.15, ease: 'power3.out',
+    scrollTrigger: { trigger: '.testi-grid', start: 'top 82%' }
+  });
+
+  /* ── Project filter — fixed ─────────────────────────────────
+     Three bugs killed:
+     1. gsap.killTweensOf('.proj-card') neutralises the entrance
+        ScrollTrigger tween on first filter click, so it can never
+        race back and stamp opacity:0 on all cards (the blank-teal bug).
+     2. CSS class (.is-filtered-out) handles display:none
+        synchronously on SHOW, removing the async race condition
+        where a stale onComplete could hide a card that was already
+        re-shown by a subsequent click.
+     3. overwrite:true on every filter tween prevents concurrent
+        tweens from stacking on the same element.
+  ─────────────────────────────────────────────────────────── */
+  ;(function () {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards      = Array.from(document.querySelectorAll('.proj-card'));
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // 1 · Update active button
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const cat = btn.dataset.filter;
+
+        // 2 · Kill ALL in-flight card tweens (entrance anim + any
+        //     previous filter tweens) to prevent conflicts
+        gsap.killTweensOf('.proj-card');
+
+        cards.forEach(card => {
+          const match = cat === 'all' || card.dataset.filter === cat;
+
+          if (match) {
+            // Remove hidden class immediately (synchronous — no race)
+            card.classList.remove('is-filtered-out');
+            // Animate in
+            gsap.fromTo(card,
+              { opacity: 0, y: 12, scale: 0.97 },
+              { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out', overwrite: true }
+            );
+          } else {
+            // Animate out, then hide via class in onComplete.
+            // If another filter fires before onComplete, killTweensOf
+            // at step 2 will abort this tween so the callback never runs.
+            gsap.to(card, {
+              opacity: 0, scale: 0.97, duration: 0.2, ease: 'power2.in',
+              overwrite: true,
+              onComplete () { card.classList.add('is-filtered-out'); }
+            });
+          }
+        });
+      });
+    });
+  })();
+
+  /* ── Upgrade 3 · Button hover glow ──────────────────────── */
+  function initHoverButtons() {
+    document.querySelectorAll('.hover-btn').forEach(btn => {
+      const glow = document.createElement('div');
+      glow.className = 'btn-glow-circle';
+      btn.appendChild(glow);
+
+      btn.addEventListener('mousemove', e => {
+        const rect = btn.getBoundingClientRect();
+        glow.style.left = (e.clientX - rect.left) + 'px';
+        glow.style.top  = (e.clientY - rect.top)  + 'px';
+      });
+      btn.addEventListener('mouseenter', () => {
+        glow.style.transform = 'translate(-50%, -50%) scale(1)';
+        glow.style.opacity   = '1';
+      });
+      btn.addEventListener('mouseleave', () => {
+        glow.style.transform = 'translate(-50%, -50%) scale(0)';
+        glow.style.opacity   = '0';
+      });
+    });
+  }
+  initHoverButtons();
+
+  /* ── Navigation scroll state ─────────────────────────────── */
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 80), { passive: true });
+
+  /* ── Mobile menu ─────────────────────────────────────────── */
+  const menu       = document.getElementById('mobileMenu');
+  const ham        = document.getElementById('hamburger');
+  const menuClose  = document.getElementById('menuClose');
+  ham.addEventListener('click', () => { menu.classList.add('open'); document.body.style.overflow = 'hidden'; });
+  const closeMenu  = () => { menu.classList.remove('open'); document.body.style.overflow = ''; };
+  menuClose.addEventListener('click', closeMenu);
+  menu.querySelectorAll('.m-link').forEach(a => a.addEventListener('click', closeMenu));
+
+  /* ── Anchor links — ScrollSmoother compat ────────────────── */
+  if (smoother) {
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) { e.preventDefault(); smoother.scrollTo(target, true, 'top top'); }
+      });
+    });
+  }
+
+  /* ── Contact form ────────────────────────────────────────── */
+  const cForm  = document.getElementById('cForm');
+  const fSucc  = document.getElementById('fSuccess');
+  const selFld = document.getElementById('f-type-field');
+  const selEl  = document.getElementById('f-type');
+  selEl.addEventListener('change', () => selFld.classList.toggle('sel-active', selEl.value !== ''));
+  selEl.addEventListener('focus',  () => selFld.classList.add('sel-active'));
+  selEl.addEventListener('blur',   () => { if (!selEl.value) selFld.classList.remove('sel-active'); });
+  cForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name  = document.getElementById('f-name').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    if (!name || !email) {
+      (!name ? document.getElementById('f-name') : document.getElementById('f-email')).focus();
+      return;
+    }
+    fSucc.style.display = 'block';
+    gsap.from(fSucc, { opacity: 0, y: 10, duration: 0.4, ease: 'power2.out' });
+    cForm.reset();
+    selFld.classList.remove('sel-active');
+  });
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SERVICES — Cinematic Scroll Animations
+     All initial states set via GSAP (degrades if JS fails).
+     GSAP 3 + ScrollTrigger already loaded above.
+════════════════════════════════════════════════════════════ -->
+<script>
+;(function () {
+
+  const section = document.querySelector('#services');
+  if (!section) return;
+
+  /* ── Kill the existing basic card tween to prevent conflict ─
+     The earlier script runs gsap.from('.svc-card', …) which
+     applies immediateRender states and creates a ScrollTrigger.
+     We replace it with the cascade below.                     */
+  gsap.killTweensOf('.svc-card');
+
+  /* ── Split heading into per-word spans for word reveal ───── */
+  const heading   = section.querySelector('.sec-heading');
+  let   wordSpans = [];
+  if (heading && !heading.querySelector('.svc-word')) {
+    heading.innerHTML = heading.textContent.trim().split(/\s+/)
+      .map(w => `<span class="svc-word" style="display:inline-block">${w}</span>`)
+      .join(' ');
+    wordSpans = Array.from(heading.querySelectorAll('.svc-word'));
+  }
+
+  /* ── References ─────────────────────────────────────────── */
+  const eyebrow = section.querySelector('.eyebrow');
+  const sub     = section.querySelector('.sec-sub');
+  const cards   = gsap.utils.toArray('#services .svc-card');
+
+  /* ── Initial states — GSAP only, not CSS ─────────────────── */
+  if (eyebrow)          gsap.set(eyebrow,   { opacity: 0, letterSpacing: '0.55em' });
+  if (wordSpans.length) gsap.set(wordSpans, { opacity: 0, y: 40 });
+  if (sub)              gsap.set(sub,       { opacity: 0, y: 22 });
+                        gsap.set(cards,     { opacity: 0, y: 60, scale: 0.95 });
+
+  cards.forEach(card => {
+    const icon  = card.querySelector('.svc-icon');
+    const title = card.querySelector('.svc-title');
+    const body  = card.querySelector('.svc-body');
+    if (icon)  gsap.set(icon,  { opacity: 0, scale: 0.5 });
+    if (title) gsap.set(title, { opacity: 0, y: 14 });
+    if (body)  gsap.set(body,  { opacity: 0, y: 10 });
+  });
+
+  /* ── TRIGGER 1 · Header: eyebrow → words → subtitle ─────── */
+  ScrollTrigger.create({
+    trigger: section,
+    start:   'top 72%',
+    once:    true,
+    onEnter () {
+      /* Immediately resolve the parent .reveal container so
+         the generic reveal handler finds it already settled  */
+      gsap.set('#services .sec-header', { opacity: 1, y: 0 });
+
+      gsap.timeline()
+
+        /* Eyebrow: wide letter-spacing collapses into place + fades */
+        .to(eyebrow, {
+          opacity: 1,
+          letterSpacing: '0.16em',
+          duration: 0.85,
+          ease: 'power3.out'
+        })
+
+        /* Heading: each word rises and fades in with stagger */
+        .to(wordSpans, {
+          opacity: 1, y: 0,
+          duration: 0.65, stagger: 0.085,
+          ease: 'power3.out'
+        }, '-=0.55')
+
+        /* Subtitle: gentle upward drift after heading settles */
+        .to(sub, {
+          opacity: 1, y: 0,
+          duration: 0.6,
+          ease: 'power3.out'
+        }, '-=0.18');
+    }
+  });
+
+  /* ── TRIGGER 2 · Cards: staggered entrance + inner cascade ─ */
+  ScrollTrigger.create({
+    trigger: '#services .services-grid',
+    start:   'top 82%',
+    once:    true,
+    onEnter () {
+      const tl = gsap.timeline();
+
+      /* Cards: slide up 60px, scale 0.95 → 1, 0.15s stagger */
+      tl.to(cards, {
+        opacity: 1, y: 0, scale: 1,
+        duration: 0.65, stagger: 0.15,
+        ease: 'power3.out'
+      });
+
+      /* Per-card inner cascade: icon → title → body */
+      cards.forEach((card, i) => {
+        const t     = i * 0.15;    /* matches each card's arrival */
+        const icon  = card.querySelector('.svc-icon');
+        const title = card.querySelector('.svc-title');
+        const body  = card.querySelector('.svc-body');
+
+        /* Icon: elastic pop (back.out bounce) */
+        if (icon)
+          tl.to(icon,  { opacity: 1, scale: 1, duration: 0.5,  ease: 'back.out(1.4)' }, t + 0.22);
+
+        /* Title: rises into place */
+        if (title)
+          tl.to(title, { opacity: 1, y: 0,     duration: 0.42, ease: 'power3.out'    }, t + 0.42);
+
+        /* Body: fades in last */
+        if (body)
+          tl.to(body,  { opacity: 1, y: 0,     duration: 0.42, ease: 'power3.out'    }, t + 0.56);
+      });
+    }
+  });
+
+})();
+</script>
+
+</div></div><!-- /smooth-content /smooth-wrapper -->
+
+</body>
+</html>
