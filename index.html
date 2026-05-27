@@ -565,6 +565,7 @@
     #testimonials {
       background: var(--navy);
       padding: var(--pad-y) 0;
+      overflow: hidden;
     }
     #testimonials .eyebrow    { color: var(--gold); }
     #testimonials .sec-heading { color: var(--near-white); }
@@ -1302,6 +1303,199 @@
     @media (max-width: 768px) {
       .proj-grid { grid-template-columns: 1fr; }
     }
+
+    /* ═══════════════════════════════════════════════════════
+       PROJECTS — HORIZONTAL SCROLL
+    ═══════════════════════════════════════════════════════ */
+    .projects-filter {
+      position: sticky;
+      top: 80px;
+      z-index: 10;
+      background: var(--soft-mint);
+      padding: 16px 0;
+      margin-bottom: 0;
+    }
+
+    .scroll-hint {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: rgba(5,22,80,0.45);
+      letter-spacing: 0.1em;
+      text-align: right;
+      padding: 0 80px;
+      margin-bottom: 16px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Zero gap — section has no extra space at bottom */
+    #projects {
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+      overflow: visible;
+    }
+    #testimonials {
+      margin-top: 0 !important;
+    }
+
+    .projects-scroll-outer {
+      overflow: hidden;
+      width: 100%;
+      position: relative;
+      cursor: default;
+    }
+
+    /* Pause on hover — CSS only */
+    .projects-scroll-outer:hover .projects-track {
+      animation-play-state: paused;
+    }
+
+    /* Filtered state — static wrapped grid, no animation */
+    .projects-scroll-outer.is-filtered {
+      overflow: visible;
+    }
+    .projects-scroll-outer.is-filtered .projects-track {
+      width: 100%;
+      flex-wrap: wrap;
+      animation: none;
+      transform: none;
+      padding: 20px 80px 40px 80px;
+      gap: 32px;
+      justify-content: flex-start;
+    }
+    /* Hide duplicate cards in filtered state */
+    .projects-scroll-outer.is-filtered .project-card[aria-hidden="true"] {
+      display: none !important;
+    }
+    @media (max-width: 768px) {
+      .projects-scroll-outer.is-filtered .projects-track {
+        padding: 20px 20px 40px 20px;
+        gap: 20px;
+      }
+      .projects-scroll-outer.is-filtered .project-card {
+        flex: 0 0 300px;
+        width: 300px;
+      }
+    }
+
+    .projects-track {
+      display: flex;
+      flex-direction: row;
+      gap: 32px;
+      width: max-content;
+      padding: 20px 0 40px 0;
+      align-items: stretch;
+      animation: projectsFlow 40s linear infinite;
+      will-change: transform;
+    }
+
+    @keyframes projectsFlow {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .project-card {
+      flex: 0 0 400px;
+      width: 400px;
+      opacity: 1;
+      transform: none;
+    }
+
+    .projects-track .proj-img-wrap {
+      height: auto;
+      aspect-ratio: 16 / 9;
+    }
+
+    @media (max-width: 768px) {
+      .projects-track {
+        gap: 20px;
+        animation-duration: 28s;
+      }
+      .project-card {
+        flex: 0 0 300px;
+        width: 300px;
+        min-width: 300px;
+      }
+      .scroll-hint { display: none; }
+      .projects-filter { position: static; }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       TESTIMONIALS — CONTINUOUS CONVEYOR BELT
+    ═══════════════════════════════════════════════════════ */
+    .testimonials-carousel {
+      overflow: hidden;
+      width: 100%;
+      position: relative;
+      cursor: default;
+      padding: 20px 0;
+      box-sizing: border-box;
+    }
+
+    .testimonials-track {
+      display: flex;
+      gap: 28px;
+      width: max-content;
+      animation: testimonialFlow 18s linear infinite;
+      will-change: transform;
+      transform: none;
+      margin-left: 0;
+    }
+
+    /* Pause on hover — CSS only, no JS needed */
+    .testimonials-carousel:hover .testimonials-track {
+      animation-play-state: paused;
+    }
+
+    @keyframes testimonialFlow {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .testimonial-card {
+      flex: 0 0 380px;
+      width: 380px;
+      min-width: 380px;
+      max-width: 380px;
+      flex-shrink: 0;
+      margin: 0;
+      overflow: hidden;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(212,168,67,0.20);
+      border-left: 3px solid var(--gold);
+      border-radius: 4px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      box-sizing: border-box;
+    }
+    .testimonial-card blockquote,
+    .testimonial-card p {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      max-width: 100%;
+    }
+    .testimonial-card:hover {
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.30);
+      transform: translateY(-4px);
+    }
+
+    @media (max-width: 768px) {
+      .testimonial-card {
+        flex: 0 0 320px;
+        width: 320px;
+        min-width: 320px;
+        padding: 28px 24px;
+      }
+      .testimonials-track {
+        animation-duration: 25s;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1414,7 +1608,7 @@
   <div class="container">
     <div class="sec-header reveal">
       <span class="eyebrow">What We Build</span>
-      <h2 class="sec-heading">Four Pillars of Our Craft</h2>
+      <h2 class="sec-heading">Pillars of Our Craft</h2>
       <p class="sec-sub">Every structure we raise is a commitment to quality, timeline, and the people who will use it.</p>
     </div>
 
@@ -1463,31 +1657,42 @@
 
 <!-- ═══ PROJECTS ═══════════════════════════════════════════════ -->
 <section id="projects">
-  <div class="container">
 
-    <!-- Split header: heading left, description + filter right -->
+  <!-- Section header — inside container -->
+  <div class="container">
     <div class="proj-header">
       <div class="proj-header-left">
         <span class="eyebrow">Our Portfolio</span>
         <h2 class="sec-heading">Work That Speaks for Itself</h2>
       </div>
       <div class="proj-header-right">
-        <p class="sec-sub">Ten projects across Chennai and Tamil Nadu, each one a benchmark we set for ourselves.</p>
-        <div class="filter-bar" role="group" aria-label="Filter projects">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="Commercial">Commercial</button>
-          <button class="filter-btn" data-filter="Industrial">Industrial</button>
-          <button class="filter-btn" data-filter="Research">Research</button>
-          <button class="filter-btn" data-filter="Residential">Residential</button>
-        </div>
+
       </div>
     </div>
+  </div>
 
-    <!-- 2-column 16:9 card grid -->
-    <div class="proj-grid" id="projectsGrid">
+  <!-- Sticky filter bar -->
+  <div class="projects-filter">
+    <div class="container">
+      <div class="filter-bar" role="group" aria-label="Filter projects">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Commercial">Commercial</button>
+        <button class="filter-btn" data-filter="Industrial">Industrial</button>
+        <button class="filter-btn" data-filter="Research">Research</button>
+        <button class="filter-btn" data-filter="Residential">Residential</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll hint (hidden on mobile via CSS) -->
+  <div class="scroll-hint" aria-hidden="true">Scroll to explore →</div>
+
+  <!-- Full-width horizontal scroll track -->
+  <div class="projects-scroll-outer">
+    <div class="projects-track" id="projectsTrack">
 
       <!-- 1 · Morrisons -->
-      <article class="proj-card" data-filter="Industrial">
+      <article class="proj-card project-card" data-filter="Industrial">
         <div class="proj-img-wrap">
           <img src="project morrison.jpg" alt="Morrisons, Medical Device Manufacturing Factory" loading="lazy">
         </div>
@@ -1501,7 +1706,7 @@
       </article>
 
       <!-- 2 · VIM Alloy -->
-      <article class="proj-card" data-filter="Industrial">
+      <article class="proj-card project-card" data-filter="Industrial">
         <div class="proj-img-wrap">
           <img src="project-vim-alloy.jpg" alt="VIM Alloy, Factory" loading="lazy">
         </div>
@@ -1515,7 +1720,7 @@
       </article>
 
       <!-- 3 · BRF 2 -->
-      <article class="proj-card" data-filter="Research">
+      <article class="proj-card project-card" data-filter="Research">
         <div class="proj-img-wrap">
           <img src="project-brf2.jpg" alt="BRF 2, Research Center" loading="lazy">
         </div>
@@ -1529,7 +1734,7 @@
       </article>
 
       <!-- 4 · ReDia -->
-      <article class="proj-card" data-filter="Industrial">
+      <article class="proj-card project-card" data-filter="Industrial">
         <div class="proj-img-wrap">
           <img src="project-redia.jpg" alt="ReDia, MDMF" loading="lazy">
         </div>
@@ -1543,7 +1748,7 @@
       </article>
 
       <!-- 5 · Shri Ram Mart -->
-      <article class="proj-card" data-filter="Commercial">
+      <article class="proj-card project-card" data-filter="Commercial">
         <div class="proj-img-wrap">
           <img src="project-shriram-mart.jpg" alt="Shri Ram Mart, Commercial Space" loading="lazy">
         </div>
@@ -1557,7 +1762,7 @@
       </article>
 
       <!-- 6 · Bioscience Research Foundation -->
-      <article class="proj-card" data-filter="Research">
+      <article class="proj-card project-card" data-filter="Research">
         <div class="proj-img-wrap">
           <img src="project-bioscience.jpg" alt="Bioscience Research Foundation, Research Center" loading="lazy">
         </div>
@@ -1571,7 +1776,7 @@
       </article>
 
       <!-- 7 · Tirupathi House -->
-      <article class="proj-card" data-filter="Residential">
+      <article class="proj-card project-card" data-filter="Residential">
         <div class="proj-img-wrap">
           <img src="project-tirupathi-house.jpg" alt="Tirupathi House, Villa" loading="lazy">
         </div>
@@ -1585,7 +1790,7 @@
       </article>
 
       <!-- 8 · GESCO -->
-      <article class="proj-card" data-filter="Industrial">
+      <article class="proj-card project-card" data-filter="Industrial">
         <div class="proj-img-wrap">
           <img src="project-gesco.jpg" alt="GESCO, MDMF" loading="lazy">
         </div>
@@ -1599,7 +1804,7 @@
       </article>
 
       <!-- 9 · Church -->
-      <article class="proj-card" data-filter="Commercial">
+      <article class="proj-card project-card" data-filter="Commercial">
         <div class="proj-img-wrap">
           <img src="project-church.jpg" alt="Church, Sirkali, Chidambaram" loading="lazy">
         </div>
@@ -1613,7 +1818,7 @@
       </article>
 
       <!-- 10 · Right Tight Fasteners -->
-      <article class="proj-card" data-filter="Industrial">
+      <article class="proj-card project-card" data-filter="Industrial">
         <div class="proj-img-wrap">
           <img src="project-right-tight.jpg" alt="Right Tight Fasteners Pvt Ltd, Automobile Manufacturing" loading="lazy">
         </div>
@@ -1626,8 +1831,151 @@
         </div>
       </article>
 
-    </div>
-  </div>
+      <!-- ── DUPLICATES (aria-hidden, for seamless loop) ── -->
+
+      <!-- 1 · Morrisons [copy] -->
+      <article class="proj-card project-card" data-filter="Industrial" aria-hidden="true">
+        <div class="proj-img-wrap">
+          <img src="project morrison.jpg" alt="" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Industrial · SIPCOT Medical Devices Park, Oragadam</p>
+          <h3 class="proj-title">Morrisons Lifecare Pvt. Ltd.</h3>
+          <div class="proj-footer">
+            <span class="proj-badge ongoing">Ongoing</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2 · VIM Alloy [copy] -->
+      <article class="proj-card project-card" data-filter="Industrial" aria-hidden="true">
+        <div class="proj-img-wrap">
+          <img src="project-vim-alloy.jpg" alt="" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Industrial · Vallam</p>
+          <h3 class="proj-title">VIM Alloy Private Limited</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3 · BRF 2 [copy] -->
+      <article class="proj-card project-card" data-filter="Research" aria-hidden="true">
+        <div class="proj-img-wrap">
+          <img src="project-brf2.jpg" alt="" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Research · Sendadu, Tiruvallur</p>
+          <h3 class="proj-title">Bioscience Research Foundation</h3>
+          <div class="proj-footer">
+            <span class="proj-badge ongoing">Ongoing</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 4 · ReDia [copy] -->
+      <article class="proj-card project-card" data-filter="Industrial" aria-hidden="true">
+        <div class="proj-img-wrap">
+          <img src="project-redia.jpg" alt="" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Industrial · SIPCOT Medical Devices Park, Oragadam</p>
+          <h3 class="proj-title">ReDia</h3>
+          <div class="proj-footer">
+            <span class="proj-badge ongoing">Ongoing</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 5 · Shri Ram Mart [copy] -->
+      <article class="proj-card project-card" data-filter="Commercial" aria-hidden="true">
+        <div class="proj-img-wrap">
+          <img src="project-shriram-mart.jpg" alt="" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Commercial · Nolambur, Chennai</p>
+          <h3 class="proj-title">Shri Ram Mart</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 6 · Bioscience Research Foundation [copy] -->
+      <article class="proj-card project-card" data-filter="Research" aria-hidden="true">
+        <div class="proj-img-wrap">
+          <img src="project-bioscience.jpg" alt="" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Research · Sriperumbudur</p>
+          <h3 class="proj-title">Bioscience Research Foundation</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 7 · Tirupathi House [copy] -->
+      <article class="proj-card project-card" data-filter="Residential" aria-hidden="true">
+        <div class="proj-img-wrap">
+          <img src="project-tirupathi-house.jpg" alt="" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Residential · Tirupathi</p>
+          <h3 class="proj-title">Tirupathi House</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 8 · GESCO [copy] -->
+      <article class="proj-card project-card" data-filter="Industrial" aria-hidden="true">
+        <div class="proj-img-wrap">
+          <img src="project-gesco.jpg" alt="" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Industrial · SIPCOT Medical Devices Park, Oragadam</p>
+          <h3 class="proj-title">GESCO Healthcare Pvt. Ltd.</h3>
+          <div class="proj-footer">
+            <span class="proj-badge ongoing">Ongoing</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 9 · Church [copy] -->
+      <article class="proj-card project-card" data-filter="Commercial" aria-hidden="true">
+        <div class="proj-img-wrap">
+          <img src="project-church.jpg" alt="" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Commercial · Sirkali, Chidambaram</p>
+          <h3 class="proj-title">Church</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 10 · Right Tight Fasteners [copy] -->
+      <article class="proj-card project-card" data-filter="Industrial" aria-hidden="true">
+        <div class="proj-img-wrap">
+          <img src="project-right-tight.jpg" alt="" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <p class="proj-type-loc">Industrial · Oragadam</p>
+          <h3 class="proj-title">Right Tight Fasteners Pvt Ltd</h3>
+          <div class="proj-footer">
+            <span class="proj-badge completed">Completed</span>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /projects-track -->
+  </div><!-- /projects-scroll-outer -->
+
 </section>
 
 
@@ -1639,51 +1987,156 @@
       <h2 class="sec-heading">What Our Clients Say</h2>
     </div>
 
-    <div class="testi-grid">
+    <div class="testimonials-carousel" id="testiCarousel">
+      <div class="testimonials-track" id="testiTrack">
 
-      <!-- Card 1 -->
-      <div class="testi-card">
-        <span class="testi-stars" aria-label="5 stars">★★★★★</span>
-        <blockquote class="testi-quote">KL Associate delivered our manufacturing facility on time and within budget. Their site management and quality of work is something we have rarely seen from any contractor in Tamil Nadu.</blockquote>
-        <div class="testi-divider" aria-hidden="true"></div>
-        <div class="testi-footer">
-          <div class="testi-avatar" aria-hidden="true">P</div>
-          <div>
-            <span class="testi-name">Project Director</span>
-            <span class="testi-role">Manufacturing Client, Tamil Nadu</span>
+        <!-- ── Original 5 cards ─────────────────────────── -->
+
+        <!-- 1 · Morrisons Lifecare -->
+        <div class="testimonial-card">
+          <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+          <blockquote class="testi-quote">Building a medical device manufacturing facility requires precision at every stage. KL Associate understood the compliance requirements, delivered on schedule, and maintained exceptional quality throughout. We could not have asked for a better construction partner.</blockquote>
+          <div class="testi-divider" aria-hidden="true"></div>
+          <div class="testi-footer">
+            <div class="testi-avatar" aria-hidden="true">M</div>
+            <div>
+              <span class="testi-name">Project Head</span>
+              <span class="testi-role">Morrisons Lifecare Pvt. Ltd., Oragadam</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Card 2 -->
-      <div class="testi-card">
-        <span class="testi-stars" aria-label="5 stars">★★★★★</span>
-        <blockquote class="testi-quote">From foundation to finish, they were transparent about every stage. No surprises, no shortcuts. We are already planning our next project with them.</blockquote>
-        <div class="testi-divider" aria-hidden="true"></div>
-        <div class="testi-footer">
-          <div class="testi-avatar" aria-hidden="true">B</div>
-          <div>
-            <span class="testi-name">Business Owner</span>
-            <span class="testi-role">Commercial Client, Chennai</span>
+        <!-- 2 · VIM Alloy -->
+        <div class="testimonial-card">
+          <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+          <blockquote class="testi-quote">Our factory needed to be built fast without compromising on structural integrity. KL Associate delivered exactly that. The team was professional, transparent, and never once missed a deadline. The facility has been running flawlessly since handover.</blockquote>
+          <div class="testi-divider" aria-hidden="true"></div>
+          <div class="testi-footer">
+            <div class="testi-avatar" aria-hidden="true">V</div>
+            <div>
+              <span class="testi-name">Director</span>
+              <span class="testi-role">VIM Alloy Private Limited, Vallam</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Card 3 -->
-      <div class="testi-card">
-        <span class="testi-stars" aria-label="5 stars">★★★★★</span>
-        <blockquote class="testi-quote">Our research center was a complex build with very specific requirements. KL Associate understood the brief and executed it with exceptional precision.</blockquote>
-        <div class="testi-divider" aria-hidden="true"></div>
-        <div class="testi-footer">
-          <div class="testi-avatar" aria-hidden="true">O</div>
-          <div>
-            <span class="testi-name">Operations Head</span>
-            <span class="testi-role">Research Institution, Sriperumbudur</span>
+        <!-- 3 · Bioscience Research Foundation -->
+        <div class="testimonial-card">
+          <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+          <blockquote class="testi-quote">We have worked with several construction companies over the years. KL Associate stands apart in their commitment to quality and honesty. Not once did they cut corners. Our research center is exactly what we envisioned.</blockquote>
+          <div class="testi-divider" aria-hidden="true"></div>
+          <div class="testi-footer">
+            <div class="testi-avatar" aria-hidden="true">B</div>
+            <div>
+              <span class="testi-name">Administrative Head</span>
+              <span class="testi-role">Bioscience Research Foundation, Sriperumbudur</span>
+            </div>
           </div>
         </div>
-      </div>
 
-    </div>
+        <!-- 4 · Right Tight Fasteners -->
+        <div class="testimonial-card">
+          <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+          <blockquote class="testi-quote">Our automobile manufacturing facility needed to meet precise engineering standards. KL Associate delivered a world-class industrial space on time and within budget. Their professionalism and site management were exceptional throughout.</blockquote>
+          <div class="testi-divider" aria-hidden="true"></div>
+          <div class="testi-footer">
+            <div class="testi-avatar" aria-hidden="true">R</div>
+            <div>
+              <span class="testi-name">Managing Director</span>
+              <span class="testi-role">Right Tight Fasteners Pvt. Ltd., Oragadam</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 · Church -->
+        <div class="testimonial-card">
+          <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+          <blockquote class="testi-quote">Constructing a place of worship carries a responsibility beyond bricks and mortar. KL Associate approached our project with genuine respect and dedication. The community is proud of what has been built and it will stand for generations.</blockquote>
+          <div class="testi-divider" aria-hidden="true"></div>
+          <div class="testi-footer">
+            <div class="testi-avatar" aria-hidden="true">C</div>
+            <div>
+              <span class="testi-name">Trust Committee</span>
+              <span class="testi-role">Church, Sirkali, Chidambaram</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Duplicate set (aria-hidden — loop seam) ──── -->
+
+        <!-- 1 copy -->
+        <div class="testimonial-card" aria-hidden="true">
+          <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+          <blockquote class="testi-quote">Building a medical device manufacturing facility requires precision at every stage. KL Associate understood the compliance requirements, delivered on schedule, and maintained exceptional quality throughout. We could not have asked for a better construction partner.</blockquote>
+          <div class="testi-divider" aria-hidden="true"></div>
+          <div class="testi-footer">
+            <div class="testi-avatar" aria-hidden="true">M</div>
+            <div>
+              <span class="testi-name">Project Head</span>
+              <span class="testi-role">Morrisons Lifecare Pvt. Ltd., Oragadam</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 copy -->
+        <div class="testimonial-card" aria-hidden="true">
+          <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+          <blockquote class="testi-quote">Our factory needed to be built fast without compromising on structural integrity. KL Associate delivered exactly that. The team was professional, transparent, and never once missed a deadline. The facility has been running flawlessly since handover.</blockquote>
+          <div class="testi-divider" aria-hidden="true"></div>
+          <div class="testi-footer">
+            <div class="testi-avatar" aria-hidden="true">V</div>
+            <div>
+              <span class="testi-name">Director</span>
+              <span class="testi-role">VIM Alloy Private Limited, Vallam</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 copy -->
+        <div class="testimonial-card" aria-hidden="true">
+          <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+          <blockquote class="testi-quote">We have worked with several construction companies over the years. KL Associate stands apart in their commitment to quality and honesty. Not once did they cut corners. Our research center is exactly what we envisioned.</blockquote>
+          <div class="testi-divider" aria-hidden="true"></div>
+          <div class="testi-footer">
+            <div class="testi-avatar" aria-hidden="true">B</div>
+            <div>
+              <span class="testi-name">Administrative Head</span>
+              <span class="testi-role">Bioscience Research Foundation, Sriperumbudur</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 copy -->
+        <div class="testimonial-card" aria-hidden="true">
+          <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+          <blockquote class="testi-quote">Our automobile manufacturing facility needed to meet precise engineering standards. KL Associate delivered a world-class industrial space on time and within budget. Their professionalism and site management were exceptional throughout.</blockquote>
+          <div class="testi-divider" aria-hidden="true"></div>
+          <div class="testi-footer">
+            <div class="testi-avatar" aria-hidden="true">R</div>
+            <div>
+              <span class="testi-name">Managing Director</span>
+              <span class="testi-role">Right Tight Fasteners Pvt. Ltd., Oragadam</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 copy -->
+        <div class="testimonial-card" aria-hidden="true">
+          <span class="testi-stars" aria-label="5 stars">★★★★★</span>
+          <blockquote class="testi-quote">Constructing a place of worship carries a responsibility beyond bricks and mortar. KL Associate approached our project with genuine respect and dedication. The community is proud of what has been built and it will stand for generations.</blockquote>
+          <div class="testi-divider" aria-hidden="true"></div>
+          <div class="testi-footer">
+            <div class="testi-avatar" aria-hidden="true">C</div>
+            <div>
+              <span class="testi-name">Trust Committee</span>
+              <span class="testi-role">Church, Sirkali, Chidambaram</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /testimonials-track -->
+    </div><!-- /testimonials-carousel -->
+
   </div>
 </section>
 
@@ -1912,6 +2365,7 @@
       effects: true,
       normalizeScroll: true
     });
+    ScrollTrigger.refresh();
   }
 
   /* ── Mobile ScrollTrigger config ────────────────────────── */
@@ -2044,12 +2498,6 @@
     opacity: 0, x: 30, duration: 0.8, ease: 'power2.out',
     scrollTrigger: { trigger: '#projects', start: 'top 82%' }
   });
-  gsap.from('.proj-card', {
-    y: 60, opacity: 0, scale: 0.96,
-    duration: 0.65, stagger: 0.09, ease: 'power3.out',
-    scrollTrigger: { trigger: '#projectsGrid', start: 'top 88%' }
-  });
-
   /* ── Generic .reveal scroll handler ─────────────────────── */
   gsap.utils.toArray('.reveal').forEach(el => {
     gsap.to(el, {
@@ -2065,72 +2513,11 @@
     scrollTrigger: { trigger: '.services-grid', start: 'top 85%' }
   });
 
-  /* ── Testimonials — heading entrance stagger ─────────────── */
+  /* ── Testimonials heading entrance ──────────────────────── */
   gsap.from(['#testimonials .eyebrow', '#testimonials .sec-heading'], {
     y: 30, opacity: 0, duration: 0.7, ease: 'power2.out', stagger: 0.12,
     scrollTrigger: { trigger: '#testimonials', start: 'top 80%' }
   });
-
-  /* ── Testimonials — card entrance with rotateY ────────────── */
-  gsap.from('.testi-card', {
-    y: 60, opacity: 0, scale: 0.96, rotateY: 8,
-    duration: 0.65, stagger: 0.15, ease: 'power3.out',
-    scrollTrigger: { trigger: '.testi-grid', start: 'top 82%' }
-  });
-
-  /* ── Project filter — fixed ─────────────────────────────────
-     Three bugs killed:
-     1. gsap.killTweensOf('.proj-card') neutralises the entrance
-        ScrollTrigger tween on first filter click, so it can never
-        race back and stamp opacity:0 on all cards (the blank-teal bug).
-     2. CSS class (.is-filtered-out) handles display:none
-        synchronously on SHOW, removing the async race condition
-        where a stale onComplete could hide a card that was already
-        re-shown by a subsequent click.
-     3. overwrite:true on every filter tween prevents concurrent
-        tweens from stacking on the same element.
-  ─────────────────────────────────────────────────────────── */
-  ;(function () {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const cards      = Array.from(document.querySelectorAll('.proj-card'));
-
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        // 1 · Update active button
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const cat = btn.dataset.filter;
-
-        // 2 · Kill ALL in-flight card tweens (entrance anim + any
-        //     previous filter tweens) to prevent conflicts
-        gsap.killTweensOf('.proj-card');
-
-        cards.forEach(card => {
-          const match = cat === 'all' || card.dataset.filter === cat;
-
-          if (match) {
-            // Remove hidden class immediately (synchronous — no race)
-            card.classList.remove('is-filtered-out');
-            // Animate in
-            gsap.fromTo(card,
-              { opacity: 0, y: 12, scale: 0.97 },
-              { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out', overwrite: true }
-            );
-          } else {
-            // Animate out, then hide via class in onComplete.
-            // If another filter fires before onComplete, killTweensOf
-            // at step 2 will abort this tween so the callback never runs.
-            gsap.to(card, {
-              opacity: 0, scale: 0.97, duration: 0.2, ease: 'power2.in',
-              overwrite: true,
-              onComplete () { card.classList.add('is-filtered-out'); }
-            });
-          }
-        });
-      });
-    });
-  })();
 
   /* ── Upgrade 3 · Button hover glow ──────────────────────── */
   function initHoverButtons() {
@@ -2323,6 +2710,82 @@
   });
 
 })();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     PROJECTS — Horizontal scroll + filter
+════════════════════════════════════════════════════════════ -->
+<script>
+;(function () {
+  'use strict';
+
+  const outer = document.querySelector('.projects-scroll-outer');
+  const track = document.querySelector('.projects-track');
+  if (!outer || !track) return;
+
+  /* ─────────────────────────────────────────────────────────
+     FILTER — toggle visibility on both original + duplicate cards
+     CSS animation continues; hidden cards collapse out of flow.
+     translateX(-50%) always equals exactly the visible-original
+     set width, so the loop remains seamless after any filter.
+  ───────────────────────────────────────────────────────── */
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const allCards   = Array.from(document.querySelectorAll('.project-card'));
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const cat = btn.dataset.filter;
+      allCards.forEach(card => {
+        const match = cat === 'all' || card.dataset.filter === cat;
+        card.classList.toggle('is-filtered-out', !match);
+      });
+
+      /* Pause animation when a specific filter is active;
+         resume when "All" is selected */
+      if (cat === 'all') {
+        track.style.animationPlayState = 'running';
+        outer.classList.remove('is-filtered');
+      } else {
+        track.style.animationPlayState = 'paused';
+        outer.classList.add('is-filtered');
+      }
+    });
+  });
+
+  /* ─────────────────────────────────────────────────────────
+     TOUCH — pause CSS animation while user touches the track
+  ───────────────────────────────────────────────────────── */
+  outer.addEventListener('touchstart', () => {
+    track.style.animationPlayState = 'paused';
+  }, { passive: true });
+
+  outer.addEventListener('touchend', () => {
+    setTimeout(() => {
+      track.style.animationPlayState = 'running';
+    }, 2000);
+  }, { passive: true });
+
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TESTIMONIALS — Auto-rotating carousel
+════════════════════════════════════════════════════════════ -->
+<script>
+/* Testimonials conveyor belt is pure CSS — @keyframes testimonialFlow
+   defined in the <style> block handles all animation.
+   Pause on hover: CSS animation-play-state via carousel:hover rule.
+   No JS needed. */
+
+/* Projects use native CSS scroll-snap — no GSAP pin, no pin spacer.
+   A single refresh aligns any remaining ScrollTriggers. */
+ScrollTrigger.refresh();
+window.addEventListener('load', () => {
+  ScrollTrigger.refresh();
+});
 </script>
 
 </div></div><!-- /smooth-content /smooth-wrapper -->
