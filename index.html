@@ -2243,7 +2243,9 @@
       <!-- Right: Form -->
       <div class="reveal">
         <h3 class="contact-form-heading">Send Us a Message</h3>
-        <form class="cform" id="cForm" novalidate>
+        <form class="cform" id="cForm" novalidate action="https://formspree.io/f/xqeoqyaw" method="POST">
+
+          <input type="text" name="_gotcha" style="display:none">
 
           <div class="field">
             <input type="text" id="f-name" name="name" placeholder=" " required autocomplete="name">
@@ -2574,7 +2576,7 @@
   selEl.addEventListener('change', () => selFld.classList.toggle('sel-active', selEl.value !== ''));
   selEl.addEventListener('focus',  () => selFld.classList.add('sel-active'));
   selEl.addEventListener('blur',   () => { if (!selEl.value) selFld.classList.remove('sel-active'); });
-  cForm.addEventListener('submit', e => {
+  cForm.addEventListener('submit', async e => {
     e.preventDefault();
     const name  = document.getElementById('f-name').value.trim();
     const email = document.getElementById('f-email').value.trim();
@@ -2582,10 +2584,19 @@
       (!name ? document.getElementById('f-name') : document.getElementById('f-email')).focus();
       return;
     }
-    fSucc.style.display = 'block';
-    gsap.from(fSucc, { opacity: 0, y: 10, duration: 0.4, ease: 'power2.out' });
-    cForm.reset();
-    selFld.classList.remove('sel-active');
+    try {
+      const res = await fetch(cForm.action, {
+        method: 'POST',
+        body: new FormData(cForm),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        fSucc.style.display = 'block';
+        gsap.from(fSucc, { opacity: 0, y: 10, duration: 0.4, ease: 'power2.out' });
+        cForm.reset();
+        selFld.classList.remove('sel-active');
+      }
+    } catch (_) { /* network error — form stays open so user can retry */ }
   });
 </script>
 
